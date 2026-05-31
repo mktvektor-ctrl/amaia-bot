@@ -49,4 +49,4 @@ app.post('/chat', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log(`amaIA corriendo en http://localhost:${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`amaIA corriendo en puerto ${PORT}`));
