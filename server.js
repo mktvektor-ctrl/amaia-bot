@@ -1,15 +1,12 @@
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
-console.log('API KEY cargada:', process.env.ANTHROPIC_API_KEY ? 'SI' : 'NO');
+
 const express = require('express');
 const cors = require('cors');
-const Anthropic = require('@anthropic-ai/sdk');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
-
-const client = new Anthropic();
 
 const SYSTEM = `Eres amaIA, la asistente de WhatsApp de Vektor MKT, una agencia de marketing digital en España.
 
@@ -35,16 +32,36 @@ REGLAS:
 
 app.post('/chat', async (req, res) => {
   const { messages } = req.body;
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  
+  console.log('API KEY presente:', apiKey ? 'SI - longitud:' + apiKey.length : 'NO');
+
   try {
-    const response = await client.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 200,
-      system: SYSTEM,
-      messages: messages
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 200,
+        system: SYSTEM,
+        messages: messages
+      })
     });
-    res.json({ reply: response.content[0].text });
+
+    const data = await response.json();
+    console.log('Respuesta API:', JSON.stringify(data).slice(0, 200));
+    
+    if (data.content && data.content[0]) {
+      res.json({ reply: data.content[0].text });
+    } else {
+      res.json({ reply: 'Un momento, enseguida te respondo 🙏' });
+    }
   } catch (error) {
-    console.error(error);
+    console.error('Error fetch:', error.message);
     res.status(500).json({ error: error.message });
   }
 });
