@@ -32,7 +32,7 @@ REGLAS:
 
 app.post('/chat', async (req, res) => {
   const { messages } = req.body;
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.ANTHROPIC_API_KEY || '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';
   
   console.log('API KEY presente:', apiKey ? 'SI - longitud:' + apiKey.length : 'NO');
 
