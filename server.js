@@ -16,7 +16,8 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const serviceAuth = new google.auth.JWT(
   process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
   null,
-  process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+  process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n').replace(/"/g, ''),
+  console.log('Key empieza:', process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n').slice(0,40));
   ['https://www.googleapis.com/auth/calendar']
 );
 const calendar = google.calendar({ version: 'v3', auth: serviceAuth });
