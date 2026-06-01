@@ -68,7 +68,7 @@ async function getAvailableSlots() {
     nextFriday.setHours(23, 59, 59, 0);
 
     const events = await calendar.events.list({
-      calendarId: 'primary',
+      calendarId: process.env.GOOGLE_CALENDAR_ID || 'primary',
       timeMin: nextMonday.toISOString(),
       timeMax: nextFriday.toISOString(),
       singleEvents: true,
@@ -118,7 +118,7 @@ async function createCalendarEvent(nombre, email, telefono, dia) {
     eventEnd.setHours(hour + 1);
 
     await calendar.events.insert({
-      calendarId: 'primary',
+      calendarId: process.env.GOOGLE_CALENDAR_ID || 'primary',
       resource: {
         summary: `Reunión Vektor MKT — ${nombre}`,
         description: `Cliente: ${nombre}\nEmail: ${email}\nTeléfono: ${telefono}`,
