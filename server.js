@@ -13,11 +13,15 @@ app.use(express.static('public'));
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Google Calendar setup
+let privateKey = process.env.GOOGLE_PRIVATE_KEY || '';
+privateKey = privateKey.replace(/\\n/g, '\n');
+if(privateKey.startsWith('"')) privateKey = privateKey.slice(1);
+if(privateKey.endsWith('"')) privateKey = privateKey.slice(0,-1);
+
 const serviceAuth = new google.auth.JWT(
   process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
   null,
-  process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n').replace(/"/g, ''),
-  
+  privateKey,
   ['https://www.googleapis.com/auth/calendar']
 );
 const calendar = google.calendar({ version: 'v3', auth: serviceAuth });
