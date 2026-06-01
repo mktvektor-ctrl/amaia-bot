@@ -58,6 +58,9 @@ async function getAvailableSlots() {
     { day: 'Viernes', hour: 11, label: 'Viernes 11:00h' },
   ];
 
+console.log('Service account email:', process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ? 'OK' : 'NO');
+console.log('Private key:', process.env.GOOGLE_PRIVATE_KEY ? 'OK longitud:'+process.env.GOOGLE_PRIVATE_KEY.length : 'NO');
+
   try {
     const now = new Date();
     const nextMonday = new Date(now);
