@@ -229,5 +229,43 @@ app.post('/chat', async (req, res) => {
   }
 });
 
+// ── Contact form endpoint ──────────────────────
+app.post('/contact', async (req, res) => {
+  const { name, email, service, message } = req.body;
+
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: 'amaIA <onboarding@resend.dev>',
+        to: 'mktvektor@gmail.com',
+        subject: `Nuevo contacto web: ${name}`,
+        html: `
+          <h2>Nuevo mensaje desde vektormkt.es</h2>
+          <p><strong>Nombre:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Servicio:</strong> ${service || 'No especificado'}</p>
+          <p><strong>Mensaje:</strong><br>${message}</p>
+        `
+      })
+    });
+
+    if (response.ok) {
+      res.json({ ok: true });
+    } else {
+      const err = await response.json();
+      console.error('Resend error:', err);
+      res.status(500).json({ ok: false, error: err });
+    }
+  } catch (err) {
+    console.error('Contact error:', err);
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, '0.0.0.0', () => console.log(`amaIA corriendo en puerto ${PORT}`));
